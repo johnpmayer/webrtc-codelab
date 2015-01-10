@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+	<meta name="keywords" content="JavaScript, WebRTC" />
+	<meta name="description" content="WebRTC codelab" />
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1">
+
+	<title>WebRTC codelab: step 2</title>
+
+	<style>
+	</style>
+
+	<script src='js/lib/adapter.js'></script>
+
+</head>
+
+<body>
+
+	<video />
+
+	<script>
+
+	navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMEdia;
+
+	// only care about video
+	var constraints = {
+		video: true
+	};
+
+	// sets up the video element with the media stream
+	function successCallback(stream) {
+		window.stream = stream;
+		var video = document.querySelector("video");
+		video.src = window.URL.createObjectURL(stream);
+		video.play();
+	}
+
+	function errorCallback(error) {
+		console.log("getUserMedia error: ", error);
+	}
+
+	// get the media with the callback which sets up the video element
+
+	getUserMedia(constraints, successCallback, errorCallback);
+
+
+	</script>
+
+</body>
+
+</html>
