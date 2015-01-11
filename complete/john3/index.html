@@ -28,6 +28,8 @@
 
   <script>
 
+// SETUP INITIAL CONDITIONS
+
 var localStream, localPeerConnection, remotePeerConnection;
 
 var localVideo = document.getElementById("localVideo");
@@ -36,8 +38,6 @@ var remoteVideo = document.getElementById("remoteVideo");
 var startButton = document.getElementById("startButton");
 var callButton = document.getElementById("callButton");
 var hangupButton = document.getElementById("hangupButton");
-
-var constraints = {video: true};
 
 startButton.disabled = false;
 callButton.disabled = true;
@@ -51,6 +51,7 @@ function trace(text) {
   console.log((performance.now() / 1000).toFixed(3) + ": " + text);
 }
 
+// Setup local video element when stream is ready
 function gotStream(stream) {
   trace("Recieved local stream");
   localVideo.src = URL.createObjectURL(stream);
@@ -58,14 +59,17 @@ function gotStream(stream) {
   callButton.disabled = false;
 }
 
+// Start button - Get the local media stream
 function start() {
   trace("Requesting local stream");
   startButton.disabled = true;
+  var constraints = {video: true};
   getUserMedia(constraints, gotStream, function(error) {
     trace("getUserMedia error: ", error);
   });
 }
 
+// Call button - setup both peer connections with callbacks, create offer from local connection
 function call() {
   callButton.disabled = true;
   hangupButton.disabled = false;
@@ -94,19 +98,24 @@ function call() {
   localPeerConnection.createOffer(gotLocalDescription, handleError);
 }
 
+// As a result of creating local offer, set descriptions and create answer
 function gotLocalDescription(description) {
   localPeerConnection.setLocalDescription(description);
+  // Simulate signaling offer description from local to remote
   trace("Offer from localPeerConnection: \n" + description.sdp);
   remotePeerConnection.setRemoteDescription(description);
   remotePeerConnection.createAnswer(gotRemoteDescription, handleError);
 }
 
+// As a result of creating answer, set descriptions
 function gotRemoteDescription(description) {
   remotePeerConnection.setLocalDescription(description);
+  // Simulate signaling answer description from remote to local
   trace("Answer from remotePeerConnection: \n" + description.sdp);
   localPeerConnection.setRemoteDescription(description);
 }
 
+// Kill both connections
 function hangup() {
   trace("Ending call");
   localPeerConnection.close();
@@ -117,11 +126,13 @@ function hangup() {
   callButton.disabled = false;
 }
 
+// Setup the remote video element when stream is ready
 function gotRemoteStream(event) {
   remoteVideo.src = URL.createObjectURL(event.stream);
   trace("Received remote stream");
 }
 
+// Just part of the protocol...
 function gotLocalIceCandidate(event) {
   if (event.candidate) {
     remotePeerConnection.addIceCandidate(new RTCIceCandidate(event.candidate));
@@ -129,6 +140,7 @@ function gotLocalIceCandidate(event) {
   }
 }
 
+// Just part of the protocol...
 function gotRemoteIceCandidate(event){
   if (event.candidate) {
     localPeerConnection.addIceCandidate(new RTCIceCandidate(event.candidate));
