@@ -10,7 +10,17 @@ var pc;
 var remoteStream;
 var turnReady;
 
-var pc_config = {'iceServers': [{'url': 'stun:stun.l.google.com:19302'}]};
+var pc_config = {
+  'iceServers': [
+    {
+      'url': 'stun:stun.l.google.com:19302'
+    }, 
+    {
+      'url': 'turn:user@www.spoilerfreezone.com',
+      'credential': 'password'
+    }
+  ]
+};
 
 var pc_constraints = {'optional': [{'DtlsSrtpKeyAgreement': true}]};
 
