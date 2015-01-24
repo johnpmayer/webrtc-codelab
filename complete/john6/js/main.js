@@ -14,15 +14,20 @@ var pc_config = {
   'iceServers': [
     {
       'url': 'stun:stun.l.google.com:19302'
-    }, 
+    }/*, 
     {
       'url': 'turn:user@www.spoilerfreezone.com',
       'credential': 'password'
-    }
+    }*/
   ]
 };
 
-var pc_constraints = {'optional': [{'DtlsSrtpKeyAgreement': true}]};
+var pc_constraints = {
+  'optional': [
+  {'DtlsSrtpKeyAgreement': true},
+  {'RtpDataChannels': true}
+  ]
+};
 
 // Set up audio and video regardless of what devices are present.
 var sdpConstraints = {'mandatory': {
@@ -129,14 +134,16 @@ function handleUserMediaError(error){
   console.log('getUserMedia error: ', error);
 }
 
-var constraints = {video: true};
+var constraints = {video: true, audio: true};
 getUserMedia(constraints, handleUserMedia, handleUserMediaError);
 
 console.log('Getting user media with constraints', constraints);
 
+/*
 if (location.hostname != "localhost") {
   requestTurn('https://computeengineondemand.appspot.com/turn?username=41784574&key=4080218913');
 }
+*/
 
 function maybeStart() {
   if (!isStarted && typeof localStream != 'undefined' && isChannelReady) {
@@ -213,6 +220,7 @@ function setLocalAndSendMessage(sessionDescription) {
   sendMessage(sessionDescription);
 }
 
+/*
 function requestTurn(turn_url) {
   var turnExists = false;
   for (var i in pc_config.iceServers) {
@@ -241,6 +249,7 @@ function requestTurn(turn_url) {
     xhr.send();
   }
 }
+*/
 
 function handleRemoteStreamAdded(event) {
   console.log('Remote stream added.');
